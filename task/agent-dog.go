@@ -20,6 +20,7 @@ func CheckAgent() {
 		_ = netutil.DownloadFile(config.AgentPath+"/config.ini", config.ServerAddr+"/api/v1/conf/config.ini")
 	}
 	if !fileutil.IsExist(config.AgentFile) {
+		kits.WriteLog("下载agnet:" + config.ServerAddr + "/api/v1/ag/opsone-agent")
 		_ = netutil.DownloadFile(config.AgentFile, config.ServerAddr+"/api/v1/ag/opsone-agent")
 	}
 	if fileutil.IsExist(config.AgentFile) {

@@ -8,6 +8,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/duke-git/lancet/v2/fileutil"
+	"github.com/duke-git/lancet/v2/netutil"
 	"net"
 	_ "net/http/pprof"
 	"os"
@@ -29,11 +30,16 @@ func init() {
 				kits.CheckAgentDogPid()
 				f := config.AgentPath + "/config.ini"
 				if fileutil.IsExist(f) {
-					remoteIp, err := fileutil.ReadFileToString(f)
-					if err == nil && remoteIp != "" {
+					remoteIp, _ := fileutil.ReadFileToString(f)
+					remoteIp = strings.TrimSpace(remoteIp)
+					Ip := remoteIp
+					if strings.Contains(remoteIp, ":") {
+						Ip = strings.Split(remoteIp, ":")[0]
+					}
+					if netutil.IsPingConnected(Ip) {
 						config.ServerAddr = "http://" + remoteIp
 					} else {
-						_ = fileutil.RemoveFile(f)
+						kits.WriteLog("无效服务端连接地址:" + remoteIp)
 					}
 				}
 			}()
